@@ -21,13 +21,19 @@ class Node:
             #child = Node(new_state, self)
             self.children.append(Node(new_state, self))
 
+    def ucb_score(self, exploration_factor = 1.4):
+        if self.visits == 0:
+            return float('inf')
         
+        return (self.wins / self.visits) + exploration_factor*  math.sqrt(2 * math.log(self.visits) / self.visits)
+
     def select_child(self, exploration_factor=1.4):
         #print(f'selection \n{self.state}')
         best_child = None
         best_score = float("-inf")
         for child in self.children:
-            score = child.wins / child.visits + exploration_factor * math.sqrt(math.log(self.visits) / child.visits)
+            child.visits += 1
+            score = self.ucb_score(exploration_factor)
             if score > best_score:
                 best_child = child
                 best_score = score
